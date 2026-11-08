@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="overlay.css">
+</head>
+<body>
+  <article class="card">
+    <header>
+      <div>
+        <h1 id="title">Токен</h1>
+        <p id="mint" class="muted">Жду адрес со страницы Axiom</p>
+      </div>
+      <button id="close" type="button" aria-label="Скрыть">×</button>
+    </header>
+    <nav>
+      <button type="button" class="tab on" data-tab="score">Оценка</button>
+      <button type="button" class="tab" data-tab="wallet">Кошелёк</button>
+      <button type="button" class="tab" data-tab="scan">Поиск</button>
+    </nav>
+    <p id="status" class="banner">Открой страницу токена.</p>
+
+    <section id="tab-score">
+      <p id="decision" class="decision">Жду данные.</p>
+      <dl>
+        <div><dt>Покупать</dt><dd id="buy-at">—</dd></div>
+        <div><dt>Продавать</dt><dd id="sell-at">—</dd></div>
+        <div><dt>Цена</dt><dd id="price">—</dd></div>
+        <div><dt>Ликвидность</dt><dd id="liquidity">—</dd></div>
+      </dl>
+      <p id="twitter" class="muted">Ссылка на X появится, если она есть в данных токена.</p>
+      <ul id="risks"></ul>
+      <p class="note">Цены бумажные. Расширение не отправляет сделку на Axiom и не читает ключ.</p>
+      <p id="balance" class="balance">10000 USDT</p>
+      <div class="actions">
+        <button id="buy" class="buy" type="button">Купить</button>
+        <button id="sell" class="sell" type="button">Продать</button>
+      </div>
+    </section>
+
+    <section id="tab-wallet" hidden>
+      <p id="creator" class="muted">Создатель появится после загрузки отчёта.</p>
+      <ul id="holders"></ul>
+    </section>
+
+    <section id="tab-scan" hidden>
+      <label class="switch"><input id="auto-open" type="checkbox"> Открывать найденный токен самой</label>
+      <button id="refresh-scan" type="button">Обновить список</button>
+      <ul id="found"></ul>
+    </section>
+  </article>
+  <script type="module" src="overlay.js"></script>
+</body>
+</html>

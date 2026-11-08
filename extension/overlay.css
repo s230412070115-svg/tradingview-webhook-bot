@@ -1,0 +1,47 @@
+:root {
+  color-scheme: dark;
+  --text: #edf3e6;
+  --muted: #a3b39a;
+  --line: #31402d;
+  --green: #8fdf6a;
+  --red: #ff8d7a;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: transparent; }
+body { font: 13px/1.35 "Segoe UI", sans-serif; color: var(--text); }
+.card {
+  height: 100%;
+  overflow: auto;
+  background: #171e16;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+nav { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-top: 10px; }
+.tab { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+.tab.on { background: #24321f; color: var(--text); }
+.decision { margin: 0 0 8px; font-size: 16px; font-weight: 700; }
+.decision.bad { color: var(--red); }
+.decision.ok { color: var(--green); }
+.switch { display: flex; gap: 8px; align-items: center; color: var(--muted); }
+#refresh-scan { margin: 8px 0; background: transparent; color: var(--text); border: 1px solid var(--line); }
+a { color: #b7e39a; }
+header { display: flex; justify-content: space-between; gap: 8px; }
+h1 { margin: 0; font-size: 16px; }
+.muted, .note { color: var(--muted); }
+.banner { margin: 10px 0; padding: 8px 10px; border-radius: 10px; background: #24321f; }
+dl { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
+dt { color: var(--muted); font-size: 11px; }
+dd { margin: 2px 0 0; font-variant-numeric: tabular-nums; }
+ul { list-style: none; margin: 8px 0; padding: 0; display: grid; gap: 6px; }
+li { padding: 6px 8px; border-radius: 8px; background: #121810; }
+li.warn { color: #e6c36a; }
+li.danger { color: var(--red); }
+.balance { margin: 8px 0; font-size: 18px; font-variant-numeric: tabular-nums; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+button { border: 0; border-radius: 10px; padding: 9px; font: inherit; font-weight: 700; cursor: pointer; }
+button:disabled { opacity: 0.45; cursor: default; }
+.buy { background: var(--green); color: #13210d; }
+.sell { background: var(--red); color: #2a1210; }
+#close { width: 28px; height: 28px; background: transparent; color: var(--text); border: 1px solid var(--line); }

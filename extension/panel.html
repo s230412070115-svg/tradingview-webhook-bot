@@ -3,34 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Бумажный счёт</title>
+  <title>Проверка токена</title>
   <link rel="stylesheet" href="panel.css">
 </head>
 <body>
   <header>
-    <h1>Бумажный счёт</h1>
-    <p>Подсказка по обычным парам вроде BTCUSDT. Это не ордер на Axiom и не ключи кошелька.</p>
+    <h1>Проверка токена</h1>
+    <p>Открой любой токен на Axiom. Карточка появится справа сверху на самой странице.</p>
   </header>
-  <p id="connection" class="banner">Проверяю локальный бот…</p>
   <section class="card">
-    <div class="label">Свободно</div>
+    <div class="label">Бумажный баланс</div>
     <p id="balance" class="balance">—</p>
     <p id="positions" class="muted">Позиций нет.</p>
   </section>
-  <section class="card">
-    <label>Тикер<input id="ticker" value="BTCUSDT" autocomplete="off"></label>
-    <label>Цена<input id="price" inputmode="decimal" placeholder="подставится из подсказки"></label>
-    <button id="hint" type="button">Показать подсказку</button>
-    <p id="signal" class="muted">Подсказка смотрит пересечение двух средних. Сделка сама не открывается.</p>
-    <div class="actions">
-      <button id="buy" class="buy" type="button">Купить</button>
-      <button id="sell" class="sell" type="button">Продать</button>
-    </div>
-  </section>
-  <section class="card">
-    <div class="label">Последнее</div>
-    <ul id="events"></ul>
-  </section>
-  <script src="panel.js"></script>
+  <script type="module" src="panel.js"></script>
 </body>
 </html>

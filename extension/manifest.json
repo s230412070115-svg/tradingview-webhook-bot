@@ -1,15 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Бумажный счёт",
-  "version": "1.0.0",
-  "description": "Панель бумажной торговли рядом с Axiom. Не нажимает кнопки сайта и не читает ключи кошелька.",
-  "permissions": ["sidePanel"],
-  "host_permissions": ["http://127.0.0.1:5000/*"],
+  "name": "Проверка токена",
+  "version": "1.3.0",
+  "description": "Карточка публичной проверки токена поверх Axiom. Не хранит ключи и не отправляет реальные сделки.",
+  "permissions": ["sidePanel", "storage"],
+  "host_permissions": [
+    "https://api.rugcheck.xyz/*",
+    "https://api.dexscreener.com/*"
+  ],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Открыть бумажный счёт"
+    "default_title": "Проверка токена"
   },
   "side_panel": {
     "default_path": "panel.html"
@@ -19,6 +22,12 @@
       "matches": ["https://axiom.trade/*", "https://*.axiom.trade/*"],
       "js": ["content.js"],
       "css": ["content.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["overlay.html", "overlay.css", "overlay.js", "paper.js"],
+      "matches": ["https://axiom.trade/*", "https://*.axiom.trade/*"]
     }
   ]
 }

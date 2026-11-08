@@ -1,14 +1,21 @@
-#paper-account-launcher {
+#paper-overlay-host {
   position: fixed;
   z-index: 2147483646;
+  top: 72px;
   right: 16px;
-  bottom: 16px;
+  width: 360px;
+  height: 640px;
+}
+
+#paper-overlay-host.is-hidden {
+  display: none;
+}
+
+#paper-overlay-frame {
+  width: 100%;
+  height: 100%;
   border: 0;
-  border-radius: 999px;
-  padding: 10px 14px;
-  background: #8fdf6a;
-  color: #13210d;
-  font: 650 13px "Segoe UI", sans-serif;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+  border-radius: 16px;
+  background: transparent;
+  color-scheme: dark;
 }
