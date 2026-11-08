@@ -1,0 +1,14 @@
+#paper-account-launcher {
+  position: fixed;
+  z-index: 2147483646;
+  right: 16px;
+  bottom: 16px;
+  border: 0;
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: #8fdf6a;
+  color: #13210d;
+  font: 650 13px "Segoe UI", sans-serif;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
+}

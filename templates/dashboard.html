@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Бумажный счёт</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #10140f;
+      --card: #1a2118;
+      --line: #2c3828;
+      --text: #edf3e6;
+      --muted: #a3b39a;
+      --green: #8fdf6a;
+      --green-ink: #13210d;
+      --red: #ff8d7a;
+      --red-ink: #2a1210;
+      --amber: #e6c36a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", sans-serif;
+      background:
+        radial-gradient(900px 420px at 10% -10%, #24321f 0%, transparent 55%),
+        var(--bg);
+      color: var(--text);
+    }
+    main { width: min(1100px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 48px; }
+    header { display: flex; justify-content: space-between; gap: 16px; align-items: flex-end; }
+    h1 { margin: 0; font-size: 28px; font-weight: 650; letter-spacing: -0.03em; }
+    .mode {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      color: var(--amber);
+      font-size: 13px;
+      letter-spacing: 0.08em;
+    }
+    .lead { margin: 8px 0 0; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 16px; margin-top: 24px; }
+    .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; }
+    .label { color: var(--muted); font-size: 13px; }
+    .balance { margin: 8px 0 0; font-size: 42px; font-variant-numeric: tabular-nums; letter-spacing: -0.04em; }
+    .balance span { font-size: 18px; color: var(--muted); margin-left: 6px; }
+    form { display: grid; gap: 12px; }
+    label { display: grid; gap: 6px; font-size: 13px; color: var(--muted); }
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #121810;
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font: inherit;
+      font-size: 16px;
+    }
+    .actions { display: flex; gap: 8px; }
+    button {
+      flex: 1;
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 10px;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+    .buy { background: var(--green); color: var(--green-ink); }
+    .sell { background: var(--red); color: var(--red-ink); }
+    .close { background: transparent; color: var(--text); border: 1px solid var(--line); }
+    .hint { margin: 0; color: var(--muted); font-size: 13px; }
+    .banner {
+      margin-top: 16px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: #24321f;
+      border: 1px solid #3e5634;
+    }
+    ul { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+    li { display: flex; justify-content: space-between; gap: 12px; padding-top: 8px; border-top: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; font-variant-numeric: tabular-nums; }
+    th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--line); font-size: 14px; }
+    th { color: var(--muted); font-weight: 550; }
+    .empty { color: var(--muted); }
+    .chart-card { margin-top: 22px; }
+    .chart-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+    .signal { font-size: 32px; margin: 4px 0 0; letter-spacing: -0.04em; }
+    .signal.buy { color: var(--green); }
+    .signal.sell { color: var(--red); }
+    .signal.wait { color: var(--amber); }
+    .price-now { font-size: 28px; margin: 0; font-variant-numeric: tabular-nums; }
+    canvas { width: 100%; height: 280px; margin-top: 12px; display: block; }
+    .speak { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 13px; }
+    .speak input { width: auto; }
+    @media (max-width: 800px) {
+      .grid { grid-template-columns: 1fr; }
+      .balance { font-size: 34px; }
+      .actions { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div>
+        <h1>{% if mode == "paper" %}Бумажный счёт{% else %}Торговля: {{ mode }}{% endif %}</h1>
+        {% if mode == "paper" %}
+          <p class="lead">Кнопки ниже отправляют команду боту на этом компьютере. Биржа не вызывается.</p>
+        {% else %}
+          <p class="lead">Кнопки отправляют ордер на биржу. Проверь режим, прежде чем нажимать.</p>
+        {% endif %}
+      </div>
+      <div class="mode">{{ mode|upper }}</div>
+    </header>
+
+    {% with messages = get_flashed_messages() %}
+      {% for message in messages %}
+        <div class="banner">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <section class="card chart-card">
+      <div class="chart-head">
+        <div>
+          <div class="label">Сигнал по минутным средним</div>
+          <p id="signal" class="signal wait">Ждать</p>
+          <p id="reason" class="hint">Загружаю график.</p>
+        </div>
+        <div>
+          <p id="live-price" class="price-now">—</p>
+          <label class="speak"><input id="speak" type="checkbox" checked> Говорить, когда покупать или продавать</label>
+        </div>
+      </div>
+      <canvas id="chart" width="1040" height="280"></canvas>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <div class="label">Свободно</div>
+        <p class="balance">{{ quote_amount }} <span>{{ quote }}</span></p>
+        <p class="hint">Одна покупка берёт {{ position_size_pct }}% от этой суммы. Продажа закрывает только монеты, которые купил бот.</p>
+        <h2 class="label" style="margin-top:22px">Позиции</h2>
+        {% if positions %}
+          <ul>
+            {% for position in positions %}
+              <li><span>{{ position.symbol }}</span><strong>{{ position.amount }}</strong></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="empty">Открытых позиций нет.</p>
+        {% endif %}
+      </article>
+
+      <article class="card">
+        <form method="post" action="{{ url_for('trade') }}">
+          <input type="hidden" name="csrf" value="{{ csrf }}">
+          <label>Тикер
+            <input id="ticker" name="ticker" value="BTCUSDT" autocomplete="off" required>
+          </label>
+          <label>Цена
+            <input id="price" name="price" inputmode="decimal" placeholder="65000" required>
+          </label>
+          <div class="actions">
+            <button class="buy" name="action" value="buy">Купить</button>
+            <button class="sell" name="action" value="sell">Продать</button>
+            <button class="close" name="action" value="close">Закрыть</button>
+          </div>
+        </form>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top:16px">
+      <div class="label">Последние действия</div>
+      {% if events %}
+        <table>
+          <thead>
+            <tr><th>Время</th><th>Действие</th><th>Символ</th><th>Количество</th><th>Цена</th><th>Статус</th></tr>
+          </thead>
+          <tbody>
+            {% for event in events %}
+              <tr>
+                <td>{{ event.created_at|replace("T", " ") }}</td>
+                <td>{{ event.action }}</td>
+                <td>{{ event.symbol }}</td>
+                <td>{{ event.amount or "—" }}</td>
+                <td>{{ event.fill_price or "—" }}</td>
+                <td>{{ {"filled": "исполнено", "rejected": "отклонено", "error": "ошибка", "pending": "в обработке"}.get(event.status, event.status) }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="empty">Сделок пока нет.</p>
+      {% endif %}
+    </section>
+  </main>
+  <script>
+    const signalNode = document.getElementById("signal");
+    const reasonNode = document.getElementById("reason");
+    const priceNode = document.getElementById("live-price");
+    const priceInput = document.getElementById("price");
+    const tickerInput = document.getElementById("ticker");
+    const canvas = document.getElementById("chart");
+    const speakBox = document.getElementById("speak");
+    const titles = { buy: "Покупать", sell: "Продавать", wait: "Ждать" };
+    let lastSpoken = "";
+    let autoPrice = "";
+
+    function draw(candles, fast, slow) {
+      const context = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      context.clearRect(0, 0, width, height);
+      const values = candles.map((item) => item.close).concat(fast.filter(Boolean), slow.filter(Boolean));
+      if (!values.length) return;
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const span = max - min || 1;
+      const xAt = (index) => 16 + (index * (width - 32)) / Math.max(candles.length - 1, 1);
+      const yAt = (value) => 16 + ((max - value) * (height - 32)) / span;
+      const line = (series, color, widthPx) => {
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = widthPx;
+        let started = false;
+        series.forEach((value, index) => {
+          if (value == null) return;
+          const x = xAt(index);
+          const y = yAt(value);
+          if (!started) { context.moveTo(x, y); started = true; }
+          else context.lineTo(x, y);
+        });
+        context.stroke();
+      };
+      line(candles.map((item) => item.close), "#edf3e6", 2);
+      line(fast, "#8fdf6a", 1.5);
+      line(slow, "#e6c36a", 1.5);
+    }
+
+    function say(signal) {
+      if (!speakBox.checked || signal === "wait" || signal === lastSpoken) return;
+      lastSpoken = signal;
+      if (!window.speechSynthesis) return;
+      const phrase = signal === "buy" ? "Покупать" : "Продавать";
+      const utterance = new SpeechSynthesisUtterance(phrase);
+      utterance.lang = "ru-RU";
+      window.speechSynthesis.cancel();
+      window.speechSynthesis.speak(utterance);
+    }
+
+    async function refreshMarket() {
+      const ticker = tickerInput.value.trim() || "BTCUSDT";
+      try {
+        const response = await fetch("/market?ticker=" + encodeURIComponent(ticker));
+        const data = await response.json();
+        if (!data.ok) {
+          reasonNode.textContent = data.error || "Котировки недоступны";
+          return;
+        }
+        signalNode.textContent = titles[data.signal] || "Ждать";
+        signalNode.className = "signal " + (data.signal || "wait");
+        reasonNode.textContent = data.reason;
+        priceNode.textContent = data.price;
+        if (!priceInput.value || priceInput.value === autoPrice) {
+          priceInput.value = data.price;
+          autoPrice = data.price;
+        }
+        draw(data.candles, data.fast, data.slow);
+        say(data.signal);
+      } catch (_error) {
+        reasonNode.textContent = "Нет связи с графиком";
+      }
+    }
+
+    refreshMarket();
+    setInterval(refreshMarket, 3000);
+    tickerInput.addEventListener("change", refreshMarket);
+  </script>
+</body>
+</html>

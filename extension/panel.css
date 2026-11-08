@@ -1,0 +1,58 @@
+:root {
+  color-scheme: dark;
+  --bg: #10140f;
+  --card: #1a2118;
+  --line: #2c3828;
+  --text: #edf3e6;
+  --muted: #a3b39a;
+  --green: #8fdf6a;
+  --red: #ff8d7a;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 14px;
+  background: var(--bg);
+  color: var(--text);
+  font: 14px/1.4 "Segoe UI", sans-serif;
+}
+h1 { margin: 0; font-size: 20px; }
+header p, .muted { color: var(--muted); }
+.card {
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.banner {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #24321f;
+}
+.balance { margin: 4px 0; font-size: 28px; font-variant-numeric: tabular-nums; }
+label { display: grid; gap: 6px; margin-bottom: 10px; color: var(--muted); }
+input, button {
+  width: 100%;
+  border-radius: 10px;
+  font: inherit;
+}
+input {
+  border: 1px solid var(--line);
+  background: #121810;
+  color: var(--text);
+  padding: 10px;
+}
+button {
+  border: 0;
+  padding: 10px;
+  font-weight: 650;
+  cursor: pointer;
+}
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+.buy { background: var(--green); color: #13210d; }
+.sell { background: var(--red); color: #2a1210; }
+#hint { background: transparent; color: var(--text); border: 1px solid var(--line); }
+ul { list-style: none; margin: 8px 0 0; padding: 0; }
+li { padding: 6px 0; border-top: 1px solid var(--line); }
